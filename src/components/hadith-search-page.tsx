@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
@@ -110,15 +111,15 @@ export default function HadithSearchPage() {
 
   return (
     <div className="space-y-8" dir="rtl">
-      <Card className="shadow-lg">
-        <CardHeader>
+      <Card className="shadow-lg border-accent/30">
+        <CardHeader className="border-b border-accent/20 pb-4">
           <CardTitle className="text-xl md:text-2xl font-semibold text-primary flex items-center">
-            <Search className="w-6 h-6 ml-2" />
+            <Search className="w-6 h-6 ml-2 text-accent" />
             ابحث عن حديث
           </CardTitle>
-          <CardDescription>أدخل كلمات رئيسية للبحث عن الأحاديث النبوية الشريفة</CardDescription>
+          <CardDescription className="text-muted-foreground">أدخل كلمات رئيسية للبحث عن الأحاديث النبوية الشريفة</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
             <Input
               type="text"
@@ -155,7 +156,7 @@ export default function HadithSearchPage() {
 
       {isLoading && !error && (
          <div className="flex justify-center items-center py-10">
-            <Loader2 className="h-12 w-12 text-primary animate-spin" />
+            <Loader2 className="h-12 w-12 text-accent animate-spin" />
             <p className="ml-4 text-lg text-muted-foreground">جاري تحميل الأحاديث...</p>
         </div>
       )}
@@ -164,20 +165,20 @@ export default function HadithSearchPage() {
         <div className="space-y-6">
           <p className="text-muted-foreground">تم العثور على {totalResults} نتيجة.</p>
           {searchResults.map((hadith, index) => (
-            <Card key={hadith.hadithId || index} className="shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <CardHeader>
-                <CardTitle className="text-lg md:text-xl text-primary-foreground bg-primary p-3 rounded-t-md" style={{direction: 'rtl'}}>
+            <Card key={hadith.hadithId || index} className="shadow-lg hover:shadow-xl transition-shadow duration-300 border-primary/30">
+              <CardHeader className="bg-primary/10 rounded-t-md">
+                <CardTitle className="text-lg md:text-xl text-primary p-3" style={{direction: 'rtl'}}>
                   {hadith.hadith.length > 100 ? `${hadith.hadith.substring(0, 100)}...` : hadith.hadith}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3 text-sm md:text-base" style={{direction: 'rtl'}}>
+              <CardContent className="space-y-3 text-sm md:text-base p-4" style={{direction: 'rtl'}}>
                 <p className="flex items-center"><UserCheck className="w-4 h-4 ml-2 text-muted-foreground" /><strong>الراوي:</strong> {hadith.rawi}</p>
                 <p className="flex items-center"><BookMarked className="w-4 h-4 ml-2 text-muted-foreground" /><strong>الكتاب:</strong> {hadith.book}</p>
                 <p className="flex items-center"><Tag className="w-4 h-4 ml-2 text-muted-foreground" /><strong>المحدث:</strong> {hadith.mohdith}</p>
                 <p className="flex items-center"><Hash className="w-4 h-4 ml-2 text-muted-foreground" /><strong>رقم الحديث/الصفحة:</strong> {hadith.numberOrPage}</p>
                 <p className="flex items-center">
-                  {hadith.grade.includes("صحيح") || hadith.grade.includes("حسن") ? <CheckCircle2 className="w-4 h-4 ml-2 text-accent" /> : <XCircle className="w-4 h-4 ml-2 text-destructive" />}
-                  <strong>درجة الصحة:</strong> {hadith.grade}
+                  {hadith.grade.includes("صحيح") || hadith.grade.includes("حسن") ? <CheckCircle2 className="w-4 h-4 ml-2 text-green-500" /> : <XCircle className="w-4 h-4 ml-2 text-red-500" />}
+                  <strong>درجة الصحة:</strong> <span className={hadith.grade.includes("صحيح") || hadith.grade.includes("حسن") ? "text-green-500" : "text-red-500"}>{hadith.grade}</span>
                 </p>
                 {hadith.explainGrade && <p className="flex items-start"><Info className="w-4 h-4 ml-2 mt-1 text-muted-foreground flex-shrink-0" /><strong>توضيح درجة الصحة:</strong> {hadith.explainGrade}</p>}
                 {hadith.hadithId && (
@@ -223,3 +224,4 @@ export default function HadithSearchPage() {
     </div>
   );
 }
+

@@ -1,11 +1,13 @@
+
 import { getHadithById, getSimilarHadithsById, getAlternateHadithsById, getSharhById, getMuhdithById, getBookById, Hadith, SharhMetadata, Muhdith, Book, SearchResult } from '@/services/dorar-api';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRightLeft, BookText, ChevronLeft, FileTextIcon, Hash, Info, Link2, Network, Users2, BookMarked, CheckCircle2, XCircle, ExternalLink, MessageCircle } from 'lucide-react';
+import { ArrowRightLeft, BookText, ChevronLeft, FileTextIcon, Hash, Info, Link2, Network, Users2, BookMarked, CheckCircle2, XCircle, ExternalLink, MessageCircle, Sparkles } from 'lucide-react';
 import Header from '@/components/header';
+import HadithAiAnalysis from '@/components/hadith-ai-analysis';
 
 interface HadithDetailPageProps {
   params: { id: string };
@@ -92,6 +94,15 @@ export default async function HadithDetailPage({ params }: HadithDetailPageProps
         }
     }
 
+    const aiAnalysisData = {
+      hadith: hadith.hadith,
+      rawi: hadith.rawi,
+      mohdith: hadith.mohdith,
+      book: hadith.book,
+      grade: hadith.grade,
+      explainGrade: hadith.explainGrade,
+    };
+
 
     return (
       <div className="flex flex-col min-h-screen bg-background" dir="rtl">
@@ -114,9 +125,10 @@ export default async function HadithDetailPage({ params }: HadithDetailPageProps
                 <InfoItem icon={<Users2 className="w-5 h-5 text-muted-foreground" />} label="المحدث" value={hadith.mohdith} />
                 <InfoItem icon={<Hash className="w-5 h-5 text-muted-foreground" />} label="رقم الحديث/الصفحة" value={hadith.numberOrPage} />
                 <InfoItem 
-                  icon={hadith.grade.includes("صحيح") || hadith.grade.includes("حسن") ? <CheckCircle2 className="w-5 h-5 text-accent" /> : <XCircle className="w-5 h-5 text-destructive" />} 
+                  icon={hadith.grade.includes("صحيح") || hadith.grade.includes("حسن") ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <XCircle className="w-5 h-5 text-red-500" />} 
                   label="درجة الصحة" 
                   value={hadith.grade} 
+                  valueClassName={hadith.grade.includes("صحيح") || hadith.grade.includes("حسن") ? "text-green-500" : "text-red-500"}
                 />
               </div>
 
@@ -155,6 +167,11 @@ export default async function HadithDetailPage({ params }: HadithDetailPageProps
               )}
 
               <Separator />
+              
+              <HadithAiAnalysis hadithData={aiAnalysisData} />
+
+              <Separator />
+
 
               <div className="space-y-4">
                 {hadith.similarHadithDorar && (
@@ -244,16 +261,17 @@ interface InfoItemProps {
   icon: React.ReactNode;
   label: string;
   value?: string | number | null;
+  valueClassName?: string;
 }
 
-function InfoItem({ icon, label, value }: InfoItemProps) {
+function InfoItem({ icon, label, value, valueClassName }: InfoItemProps) {
   if (!value) return null;
   return (
     <div className="flex items-start space-x-3 space-x-reverse">
       <span className="mt-1">{icon}</span>
       <div>
         <p className="font-medium text-foreground">{label}</p>
-        <p className="text-muted-foreground">{value}</p>
+        <p className={`text-muted-foreground ${valueClassName || ''}`}>{value}</p>
       </div>
     </div>
   );
@@ -278,3 +296,4 @@ function InfoBlock({ icon, title, children }: InfoBlockProps) {
     </div>
   );
 }
+
