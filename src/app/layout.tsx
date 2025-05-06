@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   icons: {
     apple: '/icon.png',
   },
-  themeColor: '#3498db',
+  themeColor: '#1a5946', // Corresponds to HSL 160 50% 40% (Primary Color Dark Theme)
 };
 
 export default function RootLayout({
@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" dir="ltr">
+    <html lang="en" dir="ltr" className="dark">
       <body className={`${inter.variable} ${notoSansArabic.variable} antialiased font-sans`}>
         <AppProviders>
           {children}

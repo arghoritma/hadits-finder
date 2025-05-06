@@ -4,7 +4,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRightLeft, BookOpen, ChevronLeft, FileText, Hash, Info, Link2, ListTree, Users, Tag, CheckCircle, XCircle, ExternalLink, MessageSquare } from 'lucide-react';
+import { ArrowRightLeft, BookText, ChevronLeft, FileTextIcon, Hash, Info, Link2, Network, Users2, BookMarked, CheckCircle2, XCircle, ExternalLink, MessageCircle } from 'lucide-react';
 import Header from '@/components/header';
 
 interface HadithDetailPageProps {
@@ -110,11 +110,11 @@ export default async function HadithDetailPage({ params }: HadithDetailPageProps
             </CardHeader>
             <CardContent className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-base">
-                <InfoItem icon={<BookOpen className="w-5 h-5 text-muted-foreground" />} label="الكتاب" value={hadith.book} />
-                <InfoItem icon={<Tag className="w-5 h-5 text-muted-foreground" />} label="المحدث" value={hadith.mohdith} />
+                <InfoItem icon={<BookMarked className="w-5 h-5 text-muted-foreground" />} label="الكتاب" value={hadith.book} />
+                <InfoItem icon={<Users2 className="w-5 h-5 text-muted-foreground" />} label="المحدث" value={hadith.mohdith} />
                 <InfoItem icon={<Hash className="w-5 h-5 text-muted-foreground" />} label="رقم الحديث/الصفحة" value={hadith.numberOrPage} />
                 <InfoItem 
-                  icon={hadith.grade.includes("صحيح") || hadith.grade.includes("حسن") ? <CheckCircle className="w-5 h-5 text-green-500" /> : <XCircle className="w-5 h-5 text-red-500" />} 
+                  icon={hadith.grade.includes("صحيح") || hadith.grade.includes("حسن") ? <CheckCircle2 className="w-5 h-5 text-accent" /> : <XCircle className="w-5 h-5 text-destructive" />} 
                   label="درجة الصحة" 
                   value={hadith.grade} 
                 />
@@ -127,19 +127,19 @@ export default async function HadithDetailPage({ params }: HadithDetailPageProps
               )}
 
               {hadith.takhrij && (
-                <InfoBlock icon={<FileText className="w-5 h-5 text-muted-foreground" />} title="التخريج">
+                <InfoBlock icon={<FileTextIcon className="w-5 h-5 text-muted-foreground" />} title="التخريج">
                   <p className="text-muted-foreground">{hadith.takhrij}</p>
                 </InfoBlock>
               )}
               
               {mohdithInfo && (
-                <InfoBlock icon={<Users className="w-5 h-5 text-muted-foreground" />} title={`معلومات عن المحدث: ${mohdithInfo.name}`}>
+                <InfoBlock icon={<Users2 className="w-5 h-5 text-muted-foreground" />} title={`معلومات عن المحدث: ${mohdithInfo.name}`}>
                   <p className="text-muted-foreground">{mohdithInfo.info}</p>
                 </InfoBlock>
               )}
 
               {bookInfo && (
-                <InfoBlock icon={<BookOpen className="w-5 h-5 text-muted-foreground" />} title={`معلومات عن الكتاب: ${bookInfo.name}`}>
+                <InfoBlock icon={<BookText className="w-5 h-5 text-muted-foreground" />} title={`معلومات عن الكتاب: ${bookInfo.name}`}>
                   <p className="text-muted-foreground"><strong>المؤلف:</strong> {bookInfo.author}</p>
                   {bookInfo.reviewer && <p className="text-muted-foreground"><strong>المراجع:</strong> {bookInfo.reviewer}</p>}
                   {bookInfo.publisher && <p className="text-muted-foreground"><strong>دار النشر:</strong> {bookInfo.publisher}</p>}
@@ -149,7 +149,7 @@ export default async function HadithDetailPage({ params }: HadithDetailPageProps
               )}
 
               {sharhText && (
-                <InfoBlock icon={<MessageSquare className="w-5 h-5 text-muted-foreground" />} title="شرح الحديث">
+                <InfoBlock icon={<MessageCircle className="w-5 h-5 text-muted-foreground" />} title="شرح الحديث">
                   <div className="prose prose-sm max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: sharhText.replace(/\n/g, '<br />') }} />
                 </InfoBlock>
               )}
@@ -178,7 +178,7 @@ export default async function HadithDetailPage({ params }: HadithDetailPageProps
               </div>
               
               {similarHadiths.length > 0 && (
-                <InfoBlock icon={<ListTree className="w-5 h-5 text-muted-foreground" />} title="أحاديث مشابهة">
+                <InfoBlock icon={<Network className="w-5 h-5 text-muted-foreground" />} title="أحاديث مشابهة">
                     <ul className="list-disc pl-5 space-y-2">
                         {similarHadiths.map((simHadith, idx) => (
                             <li key={idx} className="text-muted-foreground">

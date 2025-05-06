@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Search, Loader2, Frown, BookOpen, User, Tag, Hash, CheckCircle, XCircle, Info } from 'lucide-react';
+import { Search, Loader2, Frown, BookMarked, UserCheck, Tag, Hash, CheckCircle2, XCircle, Info } from 'lucide-react';
 import type { Hadith, SearchResult } from '@/services/dorar-api';
 import { searchHadiths as searchHadithsApi } from '@/services/dorar-api';
 import Link from 'next/link';
@@ -171,12 +171,12 @@ export default function HadithSearchPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-sm md:text-base" style={{direction: 'rtl'}}>
-                <p className="flex items-center"><User className="w-4 h-4 ml-2 text-muted-foreground" /><strong>الراوي:</strong> {hadith.rawi}</p>
-                <p className="flex items-center"><BookOpen className="w-4 h-4 ml-2 text-muted-foreground" /><strong>الكتاب:</strong> {hadith.book}</p>
+                <p className="flex items-center"><UserCheck className="w-4 h-4 ml-2 text-muted-foreground" /><strong>الراوي:</strong> {hadith.rawi}</p>
+                <p className="flex items-center"><BookMarked className="w-4 h-4 ml-2 text-muted-foreground" /><strong>الكتاب:</strong> {hadith.book}</p>
                 <p className="flex items-center"><Tag className="w-4 h-4 ml-2 text-muted-foreground" /><strong>المحدث:</strong> {hadith.mohdith}</p>
                 <p className="flex items-center"><Hash className="w-4 h-4 ml-2 text-muted-foreground" /><strong>رقم الحديث/الصفحة:</strong> {hadith.numberOrPage}</p>
                 <p className="flex items-center">
-                  {hadith.grade.includes("صحيح") || hadith.grade.includes("حسن") ? <CheckCircle className="w-4 h-4 ml-2 text-green-500" /> : <XCircle className="w-4 h-4 ml-2 text-red-500" />}
+                  {hadith.grade.includes("صحيح") || hadith.grade.includes("حسن") ? <CheckCircle2 className="w-4 h-4 ml-2 text-accent" /> : <XCircle className="w-4 h-4 ml-2 text-destructive" />}
                   <strong>درجة الصحة:</strong> {hadith.grade}
                 </p>
                 {hadith.explainGrade && <p className="flex items-start"><Info className="w-4 h-4 ml-2 mt-1 text-muted-foreground flex-shrink-0" /><strong>توضيح درجة الصحة:</strong> {hadith.explainGrade}</p>}

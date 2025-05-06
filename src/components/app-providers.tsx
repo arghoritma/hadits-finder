@@ -5,7 +5,7 @@ import type { ThemeProviderProps } from "next-themes/dist/types";
 
 export default function AppProviders({ children, ...props }: ThemeProviderProps) {
   return (
-    <NextThemesProvider attribute="class" defaultTheme="system" enableSystem {...props}>
+    <NextThemesProvider attribute="class" defaultTheme="dark" enableSystem={false} {...props}>
       {children}
     </NextThemesProvider>
   );
