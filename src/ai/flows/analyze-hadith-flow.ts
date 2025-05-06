@@ -9,9 +9,9 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod'; // Changed from 'genkit' to 'zod' for standard Zod import
 
-export const AnalyzeHadithInputSchema = z.object({
+const AnalyzeHadithInputSchema = z.object({
   hadithText: z.string().describe('The text of the Hadith.'),
   rawi: z.string().optional().describe('The narrator (Rawi) of the Hadith.'),
   mohdith: z.string().optional().describe('The scholar/reporter (Mohdith) who graded or compiled the Hadith.'),
@@ -21,7 +21,7 @@ export const AnalyzeHadithInputSchema = z.object({
 });
 export type AnalyzeHadithInput = z.infer<typeof AnalyzeHadithInputSchema>;
 
-export const AnalyzeHadithOutputSchema = z.object({
+const AnalyzeHadithOutputSchema = z.object({
   dirayahAnalysis: z.string().describe('Analysis of the Hadith content and meaning (Dirayah).'),
   riwayahAnalysis: z.string().describe('Analysis of the Hadith chain of narrators and authenticity (Riwayah).'),
   asbabAlWurudAnalysis: z.string().describe('Analysis of the context or reasons for the Hadith\'s pronouncement (Asbab al-Wurud).'),
@@ -71,3 +71,4 @@ const analyzeHadithFlow = ai.defineFlow(
     return output;
   }
 );
+
