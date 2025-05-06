@@ -1,8 +1,8 @@
 
 'use client';
 
-import type { Hadith } from '@/services/dorar-api';
-import { analyzeHadith, type AnalyzeHadithOutput, type AnalyzeHadithInput } from '@/ai/flows/analyze-hadith-flow';
+import type { AnalyzeHadithOutput, AnalyzeHadithInput } from '@/ai/flows/analyze-hadith-flow';
+import { analyzeHadith } from '@/ai/flows/analyze-hadith-flow';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -11,7 +11,14 @@ import { Loader2, Sparkles, BookOpenText, Network, MessageSquareQuote, AlertCirc
 import React, { useState } from 'react';
 
 interface HadithAiAnalysisProps {
-  hadithData: Pick<Hadith, 'hadith' | 'rawi' | 'mohdith' | 'book' | 'grade' | 'explainGrade'>;
+  hadithData: {
+    hadithText: string; // Changed from 'hadith' to 'hadithText'
+    rawi?: string | null;
+    mohdith?: string | null;
+    book?: string | null;
+    grade?: string | null;
+    explainGrade?: string | null;
+  };
 }
 
 export default function HadithAiAnalysis({ hadithData }: HadithAiAnalysisProps) {
@@ -26,12 +33,12 @@ export default function HadithAiAnalysis({ hadithData }: HadithAiAnalysisProps) 
 
     try {
       const input: AnalyzeHadithInput = {
-        hadithText: hadithData.hadith,
-        rawi: hadithData.rawi,
-        mohdith: hadithData.mohdith,
-        book: hadithData.book,
-        grade: hadithData.grade,
-        explainGrade: hadithData.explainGrade,
+        hadithText: hadithData.hadithText, // Use hadithText
+        rawi: hadithData.rawi || undefined,
+        mohdith: hadithData.mohdith || undefined,
+        book: hadithData.book || undefined,
+        grade: hadithData.grade || undefined,
+        explainGrade: hadithData.explainGrade || undefined,
       };
       const result = await analyzeHadith(input);
       setAnalysis(result);
@@ -91,18 +98,21 @@ export default function HadithAiAnalysis({ hadithData }: HadithAiAnalysisProps) 
         {analysis && !isLoading && (
           <Accordion type="single" collapsible defaultValue="item-1" className="w-full space-y-3">
             <AnalysisAccordionItem
+              key="dirayah"
               value="item-1"
               icon={<BookOpenText className="w-5 h-5 text-accent" />}
               title="تحليل الدراية (المتن والمعنى)"
               content={analysis.dirayahAnalysis}
             />
             <AnalysisAccordionItem
+              key="riwayah"
               value="item-2"
               icon={<Network className="w-5 h-5 text-accent" />}
               title="تحليل الرواية (السند والصحة)"
               content={analysis.riwayahAnalysis}
             />
             <AnalysisAccordionItem
+              key="asbab"
               value="item-3"
               icon={<MessageSquareQuote className="w-5 h-5 text-accent" />}
               title="أسباب الورود (سياق الحديث)"

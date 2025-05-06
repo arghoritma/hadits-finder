@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview A Hadith analysis AI agent.
@@ -9,7 +8,7 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {z} from 'zod'; // Changed from 'genkit' to 'zod' for standard Zod import
+import {z} from 'zod'; 
 
 const AnalyzeHadithInputSchema = z.object({
   hadithText: z.string().describe('The text of the Hadith.'),
@@ -32,7 +31,7 @@ export async function analyzeHadith(input: AnalyzeHadithInput): Promise<AnalyzeH
   return analyzeHadithFlow(input);
 }
 
-const prompt = ai.definePrompt({
+const analyzeHadithPrompt = ai.definePrompt({ // Renamed from `prompt` to `analyzeHadithPrompt` for clarity
   name: 'analyzeHadithPrompt',
   input: {schema: AnalyzeHadithInputSchema},
   output: {schema: AnalyzeHadithOutputSchema},
@@ -64,11 +63,11 @@ const analyzeHadithFlow = ai.defineFlow(
     outputSchema: AnalyzeHadithOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const llmResponse = await analyzeHadithPrompt.generate({input}); // Corrected: use .generate() method
+    const output = llmResponse.output(); // Corrected: call output() as a method
     if (!output) {
       throw new Error('AI analysis failed to produce output.');
     }
     return output;
   }
 );
-

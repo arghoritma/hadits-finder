@@ -20,6 +20,20 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 
+const getGradeInfo = (grade: string) => {
+  const lowerCaseGrade = grade.toLowerCase();
+  if (lowerCaseGrade.includes("صحيح") || lowerCaseGrade.includes("sahih") || lowerCaseGrade.includes("good") || lowerCaseGrade.includes("authentic")) {
+    return { icon: <CheckCircle2 className="w-4 h-4 ml-2 text-green-500" />, className: "text-green-500" };
+  }
+  if (lowerCaseGrade.includes("حسن") || lowerCaseGrade.includes("hasan")) {
+    return { icon: <CheckCircle2 className="w-4 h-4 ml-2 text-yellow-500" />, className: "text-yellow-500" };
+  }
+  if (lowerCaseGrade.includes("ضعيف") || lowerCaseGrade.includes("dhaif") || lowerCaseGrade.includes("weak")) {
+    return { icon: <XCircle className="w-4 h-4 ml-2 text-red-500" />, className: "text-red-500" };
+  }
+  return { icon: <Info className="w-4 h-4 ml-2 text-muted-foreground" />, className: "text-muted-foreground" };
+};
+
 
 export default function HadithSearchPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -30,7 +44,7 @@ export default function HadithSearchPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalResults, setTotalResults] = useState(0);
 
-  const ITEMS_PER_PAGE = 10; // Assuming API might not give total pages, we can set a default or calculate based on results/page
+  const ITEMS_PER_PAGE = 10; 
 
   const handleSearch = async (page: number = 1) => {
     if (!searchTerm.trim()) {
@@ -46,27 +60,13 @@ export default function HadithSearchPage() {
     setCurrentPage(page);
 
     try {
-      // Using /v1/site/hadith/search as it provides more details like hadithId
       const response: SearchResult = await searchHadithsApi(searchTerm, page);
       
       if (response && response.data) {
         setSearchResults(response.data);
         const numResults = parseInt(response.metadata.length, 10) || response.data.length;
         setTotalResults(numResults);
-        // API response has 'page' and 'length'. If 'length' is total items, calculate totalPages.
-        // The API's 'length' seems to be items per page. The API doc is a bit unclear on total items.
-        // For now, let's assume a fixed number of items per page if not directly given.
-        // The API example endpoint implies pagination exists.
-        // Let's assume response.metadata.length is the number of results in the current page.
-        // If we don't get total number of results, pagination will be tricky.
-        // For now, we'll assume a large number of pages if we get results, or handle it based on `response.metadata.length`.
-        // A more robust solution would require the API to return total results.
-        // The example suggests "length": "عدد نتائج البحث", which might be total results or results on current page.
-        // If 'length' is total results:
-        // setTotalPages(Math.ceil(numResults / ITEMS_PER_PAGE)); // If API returned total results
-        // If 'length' is items on current page and no total:
-        // For this example, let's assume the API doesn't give total pages. We'll make a rough guess.
-        // If we have results, show at least 5 pages for demo if API provides results.
+        
         setTotalPages(Math.max(1, Math.ceil(numResults / (response.data.length > 0 ? response.data.length : ITEMS_PER_PAGE))));
         if (response.data.length === 0) {
           setError('No Hadiths found for your search term.');
@@ -90,7 +90,7 @@ export default function HadithSearchPage() {
   
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    handleSearch(1); // Reset to page 1 for new search
+    handleSearch(1); 
   };
 
   const handlePageChange = (page: number) => {
@@ -100,7 +100,6 @@ export default function HadithSearchPage() {
   };
   
   useEffect(() => {
-    // Clear results if search term is empty
     if (!searchTerm.trim()) {
       setSearchResults([]);
       setTotalPages(0);
@@ -164,33 +163,36 @@ export default function HadithSearchPage() {
       {!isLoading && searchResults.length > 0 && (
         <div className="space-y-6">
           <p className="text-muted-foreground">تم العثور على {totalResults} نتيجة.</p>
-          {searchResults.map((hadith, index) => (
-            <Card key={hadith.hadithId || index} className="shadow-lg hover:shadow-xl transition-shadow duration-300 border-primary/30">
-              <CardHeader className="bg-primary/10 rounded-t-md">
-                <CardTitle className="text-lg md:text-xl text-primary p-3" style={{direction: 'rtl'}}>
-                  {hadith.hadith.length > 100 ? `${hadith.hadith.substring(0, 100)}...` : hadith.hadith}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 text-sm md:text-base p-4" style={{direction: 'rtl'}}>
-                <p className="flex items-center"><UserCheck className="w-4 h-4 ml-2 text-muted-foreground" /><strong>الراوي:</strong> {hadith.rawi}</p>
-                <p className="flex items-center"><BookMarked className="w-4 h-4 ml-2 text-muted-foreground" /><strong>الكتاب:</strong> {hadith.book}</p>
-                <p className="flex items-center"><Tag className="w-4 h-4 ml-2 text-muted-foreground" /><strong>المحدث:</strong> {hadith.mohdith}</p>
-                <p className="flex items-center"><Hash className="w-4 h-4 ml-2 text-muted-foreground" /><strong>رقم الحديث/الصفحة:</strong> {hadith.numberOrPage}</p>
-                <p className="flex items-center">
-                  {hadith.grade.includes("صحيح") || hadith.grade.includes("حسن") ? <CheckCircle2 className="w-4 h-4 ml-2 text-green-500" /> : <XCircle className="w-4 h-4 ml-2 text-red-500" />}
-                  <strong>درجة الصحة:</strong> <span className={hadith.grade.includes("صحيح") || hadith.grade.includes("حسن") ? "text-green-500" : "text-red-500"}>{hadith.grade}</span>
-                </p>
-                {hadith.explainGrade && <p className="flex items-start"><Info className="w-4 h-4 ml-2 mt-1 text-muted-foreground flex-shrink-0" /><strong>توضيح درجة الصحة:</strong> {hadith.explainGrade}</p>}
-                {hadith.hadithId && (
-                   <Button asChild variant="link" className="p-0 h-auto text-accent hover:text-accent/80">
-                     <Link href={`/hadith/${hadith.hadithId}`}>
-                       عرض التفاصيل
-                     </Link>
-                   </Button>
-                )}
-              </CardContent>
-            </Card>
-          ))}
+          {searchResults.map((hadith, index) => {
+            const gradeInfo = getGradeInfo(hadith.grade);
+            return (
+              <Card key={hadith.hadithId || index} className="shadow-lg hover:shadow-xl transition-shadow duration-300 border-primary/30">
+                <CardHeader className="bg-primary/10 rounded-t-md">
+                  <CardTitle className="text-lg md:text-xl text-primary p-3" style={{direction: 'rtl'}}>
+                    {hadith.hadith.length > 100 ? `${hadith.hadith.substring(0, 100)}...` : hadith.hadith}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3 text-sm md:text-base p-4" style={{direction: 'rtl'}}>
+                  <p className="flex items-center"><UserCheck className="w-4 h-4 ml-2 text-muted-foreground" /><strong>الراوي:</strong> {hadith.rawi}</p>
+                  <p className="flex items-center"><BookMarked className="w-4 h-4 ml-2 text-muted-foreground" /><strong>الكتاب:</strong> {hadith.book}</p>
+                  <p className="flex items-center"><Tag className="w-4 h-4 ml-2 text-muted-foreground" /><strong>المحدث:</strong> {hadith.mohdith}</p>
+                  <p className="flex items-center"><Hash className="w-4 h-4 ml-2 text-muted-foreground" /><strong>رقم الحديث/الصفحة:</strong> {hadith.numberOrPage}</p>
+                  <p className="flex items-center">
+                    {gradeInfo.icon}
+                    <strong>درجة الصحة:</strong> <span className={gradeInfo.className}>{hadith.grade}</span>
+                  </p>
+                  {hadith.explainGrade && <p className="flex items-start"><Info className="w-4 h-4 ml-2 mt-1 text-muted-foreground flex-shrink-0" /><strong>توضيح درجة الصحة:</strong> {hadith.explainGrade}</p>}
+                  {hadith.hadithId && (
+                     <Button asChild variant="link" className="p-0 h-auto text-accent hover:text-accent/80">
+                       <Link href={`/hadith/${hadith.hadithId}`}>
+                         عرض التفاصيل
+                       </Link>
+                     </Button>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
           {totalPages > 1 && (
              <Pagination dir="ltr">
               <PaginationContent>
@@ -199,7 +201,6 @@ export default function HadithSearchPage() {
                 </PaginationItem>
                 {[...Array(totalPages)].map((_, i) => {
                   const pageNum = i + 1;
-                  // Basic pagination display logic: show first, last, current, and pages around current
                   if (pageNum === 1 || pageNum === totalPages || (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)) {
                     return (
                       <PaginationItem key={pageNum}>
@@ -224,4 +225,3 @@ export default function HadithSearchPage() {
     </div>
   );
 }
-
