@@ -63,8 +63,7 @@ const analyzeHadithFlow = ai.defineFlow(
     outputSchema: AnalyzeHadithOutputSchema,
   },
   async input => {
-    const llmResponse = await analyzeHadithPrompt.generate({input: input, stream: false});
-    const output = llmResponse.output; 
+    const { output } = await analyzeHadithPrompt(input);
     if (!output) {
       throw new Error('AI analysis failed to produce output.');
     }
