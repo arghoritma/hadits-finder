@@ -31,7 +31,7 @@ export async function analyzeHadith(input: AnalyzeHadithInput): Promise<AnalyzeH
   return analyzeHadithFlow(input);
 }
 
-const analyzeHadithPrompt = ai.definePrompt({ // Renamed from `prompt` to `analyzeHadithPrompt` for clarity
+const analyzeHadithPrompt = ai.definePrompt({
   name: 'analyzeHadithPrompt',
   input: {schema: AnalyzeHadithInputSchema},
   output: {schema: AnalyzeHadithOutputSchema},
@@ -63,8 +63,8 @@ const analyzeHadithFlow = ai.defineFlow(
     outputSchema: AnalyzeHadithOutputSchema,
   },
   async input => {
-    const llmResponse = await analyzeHadithPrompt.generate({input}); // Corrected: use .generate() method
-    const output = llmResponse.output(); // Corrected: call output() as a method
+    const llmResponse = await analyzeHadithPrompt.generate({input: input, stream: false});
+    const output = llmResponse.output; 
     if (!output) {
       throw new Error('AI analysis failed to produce output.');
     }
